@@ -1,0 +1,16 @@
+const fs = require('fs');
+let b = fs.readFileSync('src/contexts/StoreContext.jsx', 'utf8');
+
+// Undo DB Load Header requirement and user check
+b = b.replace(
+    /\/\/ DB Load filtered by Owner via Headers\s*useEffect\(\(\) => \{\s*if \(!user\) \{\s*setProducts\(\[\]\);\s*setTransactions\(\[\]\);\s*setCustomers\(\[\]\);\s*return;\s*\}\s*const loadDB = async \(\) => \{\s*const reqOptions = \{\s*headers: \{ 'X-Owner-Id': user\.id \}\s*\};\s*try \{\s*const \[prodRes, txRes, custRes, profRes\] = await Promise\.all\(\[\s*fetch\('http:\/\/localhost:5001\/api\/products', reqOptions\),\s*fetch\('http:\/\/localhost:5001\/api\/transactions', reqOptions\),\s*fetch\('http:\/\/localhost:5001\/api\/customers', reqOptions\),\s*fetch\('http:\/\/localhost:5001\/api\/store_profiles', reqOptions\)\s*\]\);\s*if \(prodRes\.ok\) setProducts\(await prodRes\.json\(\)\);\s*if \(txRes\.ok\) setTransactions\(await txRes\.json\(\)\);\s*if \(custRes\.ok\) setCustomers\(await custRes\.json\(\)\);\s*if \(profRes\.ok\) \{\s*\/\/ Profile endpoint currently returns everything, mapped by ID\. \s*\/\/ Let's filter here just in case, but really API should handle it\.\s*const profiles = await profRes\.json\(\);\s*if \(profiles\[user\.id\]\) setStoreProfile\(profiles\[user\.id\]\);\s*\}\s*\} catch \(err\) \{\s*console\.error\("Database sync failed, ensure backend is running\."\);\s*\}\s*\};\s*loadDB\(\);\s*\}, \[user\]\);/,
+    "// Initial DB Load\n    useEffect(() => {\n        const loadDB = async () => {\n            try {\n                const [prodRes, txRes, custRes, profRes] = await Promise.all([\n                    fetch('http://localhost:5001/api/products'),\n                    fetch('http://localhost:5001/api/transactions'),\n                    fetch('http://localhost:5001/api/customers'),\n                    fetch('http://localhost:5001/api/store_profiles')\n                ]);\n\n                if (prodRes.ok) setProducts(await prodRes.json());\n                if (txRes.ok) setTransactions(await txRes.json());\n                if (custRes.ok) setCustomers(await custRes.json());\n                if (profRes.ok) {\n                    const profiles = await profRes.json();\n                    if (profiles[user?.id || 'admin']) setStoreProfile(profiles[user?.id || 'admin']);\n                }\n            } catch (err) {\n                console.error(\"Database sync failed, ensure backend is running.\");\n            }\n        };\n        loadDB();\n    }, []);"
+);
+
+b = b.replace(
+    /const apiPush = \(endpoint, method, data\) => \{\n\s*const headers = \{ 'Content-Type': 'application\/json' \};\n\s*if \(user\) headers\['X-Owner-Id'\] = user\.id;\n\s*fetch\(`http:\/\/localhost:5001\/api\/\$\{endpoint\}`\, \{\n\s*method,\n\s*headers,\n\s*body: data \? JSON\.stringify\(data\) : null\n\s*\}\)\.catch\(console\.error\);\n\s*\};/,
+    "// API Helpers\n    const apiPush = (endpoint, method, data) => {\n        fetch(`http://localhost:5001/api/${endpoint}`, {\n            method,\n            headers: { 'Content-Type': 'application/json' },\n            body: data ? JSON.stringify(data) : null\n        }).catch(console.error);\n    };"
+);
+
+fs.writeFileSync('src/contexts/StoreContext.jsx', b);
+console.log('✅ StoreContext REVERTED successfully to global shared store mode.');

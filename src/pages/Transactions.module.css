@@ -1,0 +1,131 @@
+/*
+Tilmaamo: Sida loo arko "output"-ka mashruuca (si kooban):
+
+1) Ku rakib dependencies:
+    npm install
+
+2) Orod horumarinta (Vite React):
+    npm run dev
+    Fur http://localhost:5173 si aad UI-ga u aragto
+
+3) Si aad u aragto console logs (JavaScript):
+    Browser → F12 → Console
+
+4) Si aad u aragto output-ka terminal-ka: eeg Terminal-ka meesha aad ku orday `npm run dev`.
+
+5) Haddii aad rabto inaad isticmaasho VS Code Debug: Open Run and Debug → Start Debugging.
+
+6) Script Node ah: orod `node path/to/script.js`.
+
+*/
+
+.header {
+    margin-bottom: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.title {
+    font-size: 1.875rem;
+    font-weight: 700;
+    color: var(--color-text-main);
+}
+
+.controls {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+    background-color: var(--color-bg-paper);
+    padding: 1rem;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+}
+
+.inputGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.label {
+    font-size: 0.8rem;
+    color: var(--color-text-secondary);
+}
+
+.input {
+    padding: 0.5rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--color-border);
+    background-color: var(--color-bg-main);
+    color: var(--color-text-main);
+}
+
+.exportBtn {
+    margin-left: auto;
+    padding: 0.5rem 1rem;
+    background-color: var(--color-bg-sidebar);
+    border: 1px solid var(--color-border);
+    color: var(--color-text-main);
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.exportBtn:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+}
+
+.tableContainer {
+    background-color: var(--color-bg-paper);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border);
+    overflow: hidden;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.table th {
+    padding: 1rem;
+    background-color: var(--color-bg-sidebar);
+    color: var(--color-text-secondary);
+    font-weight: 500;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.table td {
+    padding: 1rem;
+    border-bottom: 1px solid var(--color-border);
+    color: var(--color-text-main);
+}
+
+.table tr:last-child td {
+    border-bottom: none;
+}
+
+.table tr:hover {
+    background-color: rgba(255, 255, 255, 0.02);
+}
+
+.amount {
+    font-family: monospace;
+    font-weight: 600;
+    color: var(--color-success);
+}
+
+.printBtn {
+    background: none;
+    font-size: 0.8rem;
+    color: var(--color-primary);
+    text-decoration: underline;
+    cursor: pointer;
+}
