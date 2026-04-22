@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { useStore } from '../contexts/StoreContext';
 import { useAuth } from '../contexts/AuthContext';
@@ -9,6 +9,10 @@ const Settings = () => {
     const { storeProfile, updateStoreProfile } = useStore();
     const { registeredUsers, registerUser, deleteUser, user: currentUser } = useAuth();
     const [formData, setFormData] = useState(storeProfile);
+
+    useEffect(() => {
+        setFormData(storeProfile);
+    }, [storeProfile]);
 
     // User Form State
     const [newUser, setNewUser] = useState({ name: '', username: '', password: '', role: 'cashier' });

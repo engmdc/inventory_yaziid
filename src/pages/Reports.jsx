@@ -63,25 +63,14 @@ const Reports = () => {
                     }
                 });
             } else if (reportType === 'inventory') {
-                const soldMap = {};
-                (transactions || []).forEach(tx => {
-                    if (tx.type === 'sale' || tx.type === 'credit') {
-                        (tx.items || []).forEach(item => {
-                            if (!soldMap[item.productId]) soldMap[item.productId] = 0;
-                            soldMap[item.productId] += item.quantity;
-                        });
-                    }
-                });
-
                 (products || []).forEach(product => {
                     const remainingStock = Number(product.stock) || 0;
-                    const sold = soldMap[product.id] || 0;
-                    const initialStock = remainingStock + sold;
 
                     grouped[product.id] = {
                         label: product.name || 'Unknown Product',
-                        value: remainingStock,     // Status (99)
-                        count: initialStock        // Stock Quantity (100)
+                        value: remainingStock,     // for chart
+                        count: remainingStock,     // Stock Quantity
+                        status: remainingStock > 0 ? 'Stable' : 'Unstable'
                     };
                 });
             }
@@ -126,7 +115,7 @@ const Reports = () => {
         } else if (reportType === 'customer_debt') {
             csvContent = 'Customer Name,Total Purchases,Outstanding Debt ($)\n';
         } else if (reportType === 'inventory') {
-            csvContent = 'Product Name,Stock Quantity,Status\n';
+            csvContent = 'Stock,Quantity,Status\n';
         } else {
             csvContent = 'Date,Transactions,Total Amount ($)\n';
         }
@@ -138,7 +127,7 @@ const Reports = () => {
             const safeLabel = `"${labelStr.replace(/"/g, '""')}"`;
 
             if (reportType === 'inventory') {
-                csvContent += `${safeLabel},${item.count},${item.value}\n`;
+                csvContent += `${safeLabel},${item.count},${item.status}\n`;
             } else {
                 const formattedValue = Number(item.value).toFixed(2);
                 csvContent += `${safeLabel},${item.count},${formattedValue}\n`;
@@ -306,8 +295,8 @@ const Reports = () => {
                                         <table className={styles.table}>
                                             <thead>
                                                 <tr>
-                                                    <th>{reportType === 'products' ? 'Product Name' : (reportType === 'customer_debt' ? 'Customer Name' : reportType === 'inventory' ? 'Product Name' : 'Date')}</th>
-                                                    <th>{reportType === 'products' ? 'Units Sold' : (reportType === 'customer_debt' ? 'Total Purchases' : reportType === 'inventory' ? 'Stock Quantity' : 'Transactions')}</th>
+                                                    <th>{reportType === 'products' ? 'Product Name' : (reportType === 'customer_debt' ? 'Customer Name' : reportType === 'inventory' ? 'Stock' : 'Date')}</th>
+                                                    <th>{reportType === 'products' ? 'Units Sold' : (reportType === 'customer_debt' ? 'Total Purchases' : reportType === 'inventory' ? 'Quantity' : 'Transactions')}</th>
                                                     <th>{reportType === 'inventory' ? 'Status' : 'Total ($)'}</th>
                                                 </tr>
                                             </thead>
@@ -316,8 +305,8 @@ const Reports = () => {
                                                     <tr key={idx}>
                                                         <td style={{ fontWeight: 500, color: 'var(--color-text-main)' }}>{item.label}</td>
                                                         <td>{item.count}</td>
-                                                        <td style={{ color: 'var(--color-success)', fontWeight: 600 }}>
-                                                            {reportType === 'inventory' ? item.value : `$${Number(item.value).toFixed(2)}`}
+                                                        <td style={{ color: reportType === 'inventory' ? (item.count > 0 ? 'var(--color-success)' : 'var(--color-danger)') : 'var(--color-success)', fontWeight: 600 }}>
+                                                            {reportType === 'inventory' ? item.status : `$${Number(item.value).toFixed(2)}`}
                                                         </td>
                                                     </tr>
                                                 ))}

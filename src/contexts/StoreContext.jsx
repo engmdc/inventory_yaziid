@@ -34,8 +34,8 @@ export const StoreProvider = ({ children }) => {
                 if (txRes.ok) setTransactions(await txRes.json());
                 if (custRes.ok) setCustomers(await custRes.json());
                 if (profRes.ok) {
-                    const profiles = await profRes.json();
-                    if (profiles[user?.id || 'admin']) setStoreProfile(profiles[user?.id || 'admin']);
+                    const profile = await profRes.json();
+                    if (profile) setStoreProfile(profile);
                 }
             } catch (err) {
                 console.error("Database sync failed, ensure backend is running.");
@@ -130,23 +130,7 @@ export const StoreProvider = ({ children }) => {
         setTransactions(prev => prev.filter(t => t.id !== id));
         apiPush(`transactions/${id}`, 'DELETE');
 
-        // Restore Stock
-        if (transaction.items) {
-            const stockUpdates = [];
-            transaction.items.forEach(item => {
-                setProducts(prev => prev.map(p => {
-                    if (p.id === item.productId) {
-                        const newStock = p.stock + item.quantity;
-                        stockUpdates.push({ id: p.id, newStock: newStock });
-                        return { ...p, stock: newStock };
-                    }
-                    return p;
-                }));
-            });
-            if (stockUpdates.length > 0) {
-                apiPush('products/bulk-stock', 'PATCH', { updates: stockUpdates });
-            }
-        }
+
 
         // Revert Debt
         if (transaction.paymentMethod === 'credit' && transaction.customerId) {
@@ -228,8 +212,7 @@ export const StoreProvider = ({ children }) => {
     };
 
     const updateStoreProfile = (data) => {
-        if (!user) return;
-        const newProfileData = { ...storeProfile, ...data, userId: user.id };
+        const newProfileData = { ...storeProfile, ...data };
         setStoreProfile(newProfileData);
         apiPush('store_profiles', 'POST', newProfileData);
     };

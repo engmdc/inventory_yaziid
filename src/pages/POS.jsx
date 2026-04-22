@@ -103,7 +103,7 @@ const POS = () => {
         setPaymentMethod('cash'); // Reset payment method
 
         toast.success('Transaction Completed Successfully!', {
-            description: `Total: $${finalTotal.toFixed(2)}`
+            description: `Total: ${paymentMethod === 'cash' ? 'SLSH ' : '$'}${finalTotal.toFixed(2)}`
         });
     };
 
@@ -157,7 +157,7 @@ const POS = () => {
                             <div key={item.productId} className={styles.cartItem}>
                                 <div className={styles.itemInfo}>
                                     <span className={styles.itemName}>{item.name}</span>
-                                    <span className={styles.itemPrice}>${item.price.toFixed(2)} x {item.quantity}</span>
+                                    <span className={styles.itemPrice}>{paymentMethod === 'cash' ? 'SLSH ' : '$'}{item.price.toFixed(2)} x {item.quantity}</span>
                                 </div>
                                 <div className={styles.itemControls}>
                                     <button className={styles.qtyBtn} onClick={() => updateQuantity(item.productId, -1)}>
@@ -271,17 +271,17 @@ const POS = () => {
                     <div className={styles.total} style={{ flexDirection: 'column', alignItems: 'flex-end', gap: '0.25rem' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', fontSize: '0.9rem', color: 'var(--color-text-secondary)' }}>
                             <span>Subtotal</span>
-                            <span>${totalAmount.toFixed(2)}</span>
+                            <span>{paymentMethod === 'cash' ? 'SLSH ' : '$'}{totalAmount.toFixed(2)}</span>
                         </div>
                         {discountAmount > 0 && (
                             <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', fontSize: '0.9rem', color: '#10b981' }}>
                                 <span>Discount</span>
-                                <span>-${discountAmount.toFixed(2)}</span>
+                                <span>-{paymentMethod === 'cash' ? 'SLSH ' : '$'}{discountAmount.toFixed(2)}</span>
                             </div>
                         )}
                         <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', fontSize: '1.5rem', fontWeight: 'bold' }}>
                             <span>Total</span>
-                            <span>${finalTotal.toFixed(2)}</span>
+                            <span>{paymentMethod === 'cash' ? 'SLSH ' : '$'}{finalTotal.toFixed(2)}</span>
                         </div>
                     </div>
                     <button

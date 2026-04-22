@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { X, DollarSign } from 'lucide-react';
+import { toast } from 'sonner';
 import styles from './CustomerModal.module.css'; // Reusing styles
 
 const DebtPaymentModal = ({ isOpen, onClose, onPayment, customer }) => {
@@ -8,7 +9,16 @@ const DebtPaymentModal = ({ isOpen, onClose, onPayment, customer }) => {
     const handleSubmit = (e) => {
         e.preventDefault();
         const val = parseFloat(amount);
-        if (!val || val <= 0) return;
+        
+        if (!val || val <= 0) {
+            toast.error('Fadlan gali lacag (Please enter a valid amount)');
+            return;
+        }
+
+        if (val > customer.debt) {
+            toast.error('Lacagta la bixinayo kama badnaan karto deynta (' + customer.debt.toFixed(2) + ')');
+            return;
+        }
 
         onPayment(customer.id, val);
         setAmount('');
@@ -45,7 +55,6 @@ const DebtPaymentModal = ({ isOpen, onClose, onPayment, customer }) => {
                                 required
                                 min="0.01"
                                 step="0.01"
-                                max={customer.debt}
                                 className={styles.input}
                                 value={amount}
                                 onChange={(e) => setAmount(e.target.value)}

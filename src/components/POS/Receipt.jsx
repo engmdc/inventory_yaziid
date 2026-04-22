@@ -8,6 +8,8 @@ const Receipt = forwardRef(({ transaction }, ref) => {
     const { user } = useAuth();
     if (!transaction) return null;
 
+    const cur = transaction.paymentMethod === 'cash' ? 'SLSH ' : '$';
+
     const customer = transaction.customerId ? customers.find(c => c.id === transaction.customerId) : null;
 
     // Calculate total credit and total payments for the formula display
@@ -90,8 +92,8 @@ const Receipt = forwardRef(({ transaction }, ref) => {
                                     )}
                                 </td>
                                 <td className="center">{item.quantity}</td>
-                                <td className="right">${item.price.toFixed(2)}</td>
-                                <td className="right">${(item.price * item.quantity).toFixed(2)}</td>
+                                <td className="right">{cur}{item.price.toFixed(2)}</td>
+                                <td className="right">{cur}{(item.price * item.quantity).toFixed(2)}</td>
                             </tr>
                         ))}
                     </tbody>
@@ -102,25 +104,25 @@ const Receipt = forwardRef(({ transaction }, ref) => {
                 {transaction.type === 'payment' ? (
                     <div className="totalsRow grandTotal">
                         <span>Payment Amount:</span>
-                        <span>${transaction.amount ? transaction.amount.toFixed(2) : transaction.total.toFixed(2)}</span>
+                        <span>{cur}{transaction.amount ? transaction.amount.toFixed(2) : transaction.total.toFixed(2)}</span>
                     </div>
                 ) : (
                     <>
                         {transaction.discount > 0 && (
                             <div className="totalsRow text-muted">
                                 <span>Subtotal:</span>
-                                <span>${(transaction.total + transaction.discount).toFixed(2)}</span>
+                                <span>{cur}{(transaction.total + transaction.discount).toFixed(2)}</span>
                             </div>
                         )}
                         {transaction.discount > 0 && (
                             <div className="totalsRow text-muted">
                                 <span>Discount:</span>
-                                <span>-${transaction.discount.toFixed(2)}</span>
+                                <span>-{cur}{transaction.discount.toFixed(2)}</span>
                             </div>
                         )}
                         <div className="totalsRow grandTotal">
                             <span>Total:</span>
-                            <span>${transaction.total.toFixed(2)}</span>
+                            <span>{cur}{transaction.total.toFixed(2)}</span>
                         </div>
                     </>
                 )}
@@ -128,7 +130,7 @@ const Receipt = forwardRef(({ transaction }, ref) => {
                 {transaction.type !== 'payment' && (
                     <div className="totalsRow paymentMethod">
                         <span>Amount Paid:</span>
-                        <span>${transaction.paymentMethod === 'credit' ? '0.00' : transaction.total.toFixed(2)}</span>
+                        <span>{transaction.paymentMethod === 'credit' ? `${cur}0.00` : `${cur}${transaction.total.toFixed(2)}`}</span>
                     </div>
                 )}
 
@@ -141,15 +143,15 @@ const Receipt = forwardRef(({ transaction }, ref) => {
                     <div style={{ marginTop: '1rem', paddingTop: '0.5rem', borderTop: '2px dashed #cbd5e1' }}>
                         <div className="totalsRow text-muted" style={{ fontSize: '0.9em' }}>
                             <span>Total Credit:</span>
-                            <span>${totalCredit.toFixed(2)}</span>
+                            <span>{cur}{totalCredit.toFixed(2)}</span>
                         </div>
                         <div className="totalsRow text-muted" style={{ fontSize: '0.9em' }}>
                             <span>Total Payments:</span>
-                            <span>-${totalPaid.toFixed(2)}</span>
+                            <span>-{cur}{totalPaid.toFixed(2)}</span>
                         </div>
                         <div className="totalsRow debtInfo" style={{ marginTop: '0.25rem', paddingTop: '0.25rem', borderTop: '1px solid #e2e8f0' }}>
                             <span>Remaining Balance (Debt):</span>
-                            <span style={{ fontWeight: 'bold' }}>${calculatedRemaining.toFixed(2)}</span>
+                            <span style={{ fontWeight: 'bold' }}>{cur}{calculatedRemaining.toFixed(2)}</span>
                         </div>
                     </div>
                 )}

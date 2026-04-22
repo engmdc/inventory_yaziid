@@ -55,9 +55,9 @@ const Transactions = () => {
     };
 
     const handleDelete = (id) => {
-        if (confirm('Are you sure? This will delete the transaction and RESTORE stock.')) {
+        if (confirm('Are you sure you want to delete this transaction?')) {
             deleteTransaction(id);
-            toast.success('Transaction deleted & stock restored');
+            toast.success('Transaction deleted');
         }
     };
 
@@ -83,7 +83,7 @@ const Transactions = () => {
                 const role = userRef.role ? userRef.role.toUpperCase() : 'USER';
                 roleString = `${name} (${role})`;
             }
-            
+
             return [
                 new Date(tx.date).toLocaleDateString(),
                 tx.id,
@@ -220,10 +220,10 @@ const Transactions = () => {
                                         ))}
                                     </td>
                                     <td className={styles.amount}>
-                                        ${tx.total.toFixed(2)}
+                                        {tx.paymentMethod === 'cash' ? `SLSH ${tx.total.toFixed(2)}` : `$${tx.total.toFixed(2)}`}
                                         {tx.discount > 0 && (
                                             <div style={{ fontSize: '0.75rem', color: '#10b981', fontWeight: 'normal' }}>
-                                                Disc: -${tx.discount.toFixed(2)}
+                                                Disc: -{tx.paymentMethod === 'cash' ? `SLSH ${tx.discount.toFixed(2)}` : `$${tx.discount.toFixed(2)}`}
                                             </div>
                                         )}
                                     </td>
@@ -239,7 +239,7 @@ const Transactions = () => {
                                             className={styles.printBtn}
                                             onClick={() => handleDelete(tx.id)}
                                             style={{ color: 'var(--color-danger)' }}
-                                            title="Delete & Restore Stock"
+                                            title="Delete Transaction"
                                         >
                                             <Trash2 size={16} />
                                         </button>

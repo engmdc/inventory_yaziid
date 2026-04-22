@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Store } from 'lucide-react';
+import logoImage from '../images/logo-image.png';
 import { useAuth } from '../contexts/AuthContext';
 import styles from './Login.module.css';
 
@@ -25,8 +25,8 @@ const Login = () => {
     return (
         <div className={styles.container}>
             <div className={styles.card}>
-                <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem', color: '#6366f1' }}>
-                    <Store size={48} />
+                <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.5rem' }}>
+                    <img src={logoImage} alt="Store Logo" style={{ width: '120px', height: '120px', objectFit: 'cover', borderRadius: '50%', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }} />
                 </div>
                 <h1 className={styles.title}>Welcome Back</h1>
                 <p className={styles.subtitle}>Enter your credentials to access the store</p>
@@ -62,6 +62,7 @@ const Login = () => {
                 </form>
 
                 <p style={{ textAlign: 'center', fontSize: '0.8rem', color: '#64748b', marginTop: '1.5rem' }}>
+
 
                 </p>
             </div>

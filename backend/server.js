@@ -260,28 +260,41 @@ app.delete('/api/transactions/:id', async (req, res) => {
 // ----------------- STORE PROFILES API -----------------
 app.get('/api/store_profiles', async (req, res) => {
     try {
-        const [rows] = await pool.query('SELECT * FROM store_profiles');
-        const profilesMap = {};
-        rows.forEach(r => profilesMap[r.user_id] = r);
-        res.json(profilesMap);
+        const [rows] = await pool.query('SELECT * FROM store_profiles LIMIT 1');
+        res.json(rows.length > 0 ? rows[0] : null);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
 });
 
 app.post('/api/store_profiles', async (req, res) => {
+    const connection = await pool.getConnection();
     try {
-        const { userId, name, address, phone, receiptSize, taxNumber, receiptFooter, showCashier } = req.body;
-        await pool.query(`
+        const { name, address, phone, receiptSize, taxNumber, receiptFooter, showCashier } = req.body;
+        await connection.beginTransaction();
+
+        await connection.query('DELETE FROM store_profiles');
+
+        await connection.query(`
             INSERT INTO store_profiles (user_id, name, address, phone, receiptSize, taxNumber, receiptFooter, showCashier) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-            ON DUPLICATE KEY UPDATE 
-            name=VALUES(name), address=VALUES(address), phone=VALUES(phone), receiptSize=VALUES(receiptSize),
-            taxNumber=VALUES(taxNumber), receiptFooter=VALUES(receiptFooter), showCashier=VALUES(showCashier)
-        `, [userId, name, address, phone, receiptSize, taxNumber, receiptFooter, showCashier]);
-        res.json({ message: 'Profile updated' });
+            VALUES ('global', ?, ?, ?, ?, ?, ?, ?)
+        `, [
+            name,
+            address || null,
+            phone || null,
+            receiptSize || '80mm',
+            taxNumber || null,
+            receiptFooter || null,
+            showCashier || 'yes'
+        ]);
+
+        await connection.commit();
+        res.json({ message: 'Profile updated and old ones deleted' });
     } catch (error) {
+        await connection.rollback();
         res.status(500).json({ error: error.message });
+    } finally {
+        connection.release();
     }
 });
 
@@ -289,3 +302,5 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     console.log(`🚀 Server running on http://localhost:${PORT}`);
 });
+
+
