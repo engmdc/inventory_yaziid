@@ -1,6 +1,4 @@
--- Create the Database
-CREATE DATABASE IF NOT EXISTS store_system_db;
-USE store_system_db;
+-- Use default database
 
 -- 1. Users Table
 CREATE TABLE IF NOT EXISTS users (
