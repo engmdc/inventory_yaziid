@@ -124,6 +124,7 @@ app.patch('/api/customers/:id/debt', async (req, res) => {
 });
 
 // ----------------- PRODUCTS API -----------------
+//   hallo
 app.get('/api/products', async (req, res) => {
     try {
         const [rows] = await pool.query('SELECT * FROM products');
